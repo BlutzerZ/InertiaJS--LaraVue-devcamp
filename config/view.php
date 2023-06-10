@@ -1,36 +1,50 @@
 <?php
 
-return [
 
-    /*
-    |--------------------------------------------------------------------------
-    | View Storage Paths
-    |--------------------------------------------------------------------------
-    |
-    | Most templating systems load templates from disk. Here you may specify
-    | an array of paths that should be checked for your views. Of course
-    | the usual Laravel view path has already been registered for you.
-    |
-    */
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LoginController;
 
-    'paths' => [
-        resource_path('views'),
-    ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Compiled View Path
-    |--------------------------------------------------------------------------
-    |
-    | This option determines where all the compiled Blade templates will be
-    | stored for your application. Typically, this is within the storage
-    | directory. However, as usual, you are free to change this value.
-    |
-    */
 
-    'compiled' => env(
-        'VIEW_COMPILED_PATH',
-        realpath(storage_path('framework/views'))
-    ),
 
-];
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+
+
+
+Route::get('/', function () {
+  return redirect('/admin');
+});
+
+
+
+
+Route::prefix('admin')->group(function () {
+  Route::controller(LoginController::class)->group(function () {
+       Route::get('login', 'showLoginForm')->name('login');
+       Route::post('login', 'login');
+
+
+       Route::middleware(['auth'])->group(function () {
+         Route::post('logout', 'logout')->name('logout');
+       });
+  });
+
+
+
+
+  Route::middleware(['auth'])->group(function () {
+      Route::get('/', function () {
+          return 'Success';
+      });
+  });
+});
